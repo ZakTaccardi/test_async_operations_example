@@ -1,4 +1,4 @@
-# Easily test your one-off async operations on Android with Dagger2
+# Easily test your one-off async operations on Android with Dagger2 and RxJava
 
 Companion code to this [medium article](https://medium.com/@ZakTaccardi/easily-test-your-one-off-async-operations-on-android-with-dagger2-eb77c6221901).
 
