@@ -1,0 +1,125 @@
+buildscript {
+
+    ext {
+        //android build
+        aptVersion = '1.7'
+        gradleRetrolambdaVersion = '3.2.3'
+
+        //google
+        supportLibraryVersion = '23.1.1'
+
+        //java
+        rxAndroidVersion = "1.1.0"
+
+        //testing
+        junitVersion = '4.12'
+        mockitoVersion = '1.10.19'
+        hamcrestJunitVersion = '2.0.0.0'
+        dexmakerMockitoVersion = '1.2'
+        dexmakerVersion = '1.2'
+        espressoVersion = '2.2.1'
+        uiAutomaterVersion = '2.1.1'
+        supportTestRunnerAndRulesVersion = '0.4.1'
+        robolectricVersion = '3.0'
+    }
+
+    repositories {
+        jcenter()
+        mavenCentral()
+
+        maven {
+            url 'http://oss.sonatype.org/content/repositories/snapshots/'
+        }
+    }
+    dependencies {
+        classpath "com.neenbedankt.gradle.plugins:android-apt:$aptVersion"
+        classpath "me.tatarka:gradle-retrolambda:$gradleRetrolambdaVersion"
+
+    }
+
+
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+apply plugin: 'me.tatarka.retrolambda'
+
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
+    defaultConfig {
+        applicationId "com.zaktaccardi.example"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+configurations.all {
+    // Currently espresso is dependent on support-annotations:22.2.0
+    resolutionStrategy.force "com.android.support:support-annotations:$supportLibraryVersion"
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    /**
+     * Google dependencies
+     */
+    compile "com.android.support:appcompat-v7:$supportLibraryVersion"
+
+    /**
+     * Android dependencies
+     */
+    compile "io.reactivex:rxandroid:$rxAndroidVersion"
+
+    /**
+     * Java dependencies
+     */
+    compile rootProject.deps.rxjava
+    compile rootProject.deps.javaAnnotationApi
+    compile rootProject.deps.dagger2
+    apt rootProject.deps.dagger2compiler
+
+    /**
+     * Unit Testing dependencies
+     */
+    testCompile "org.hamcrest:hamcrest-junit:$hamcrestJunitVersion"
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile("org.robolectric:robolectric:$robolectricVersion") {
+        exclude group: "commons-logging", module: "commons-logging"
+        exclude group: "org.apache.httpcomponents", module: "httpclient"
+    }
+
+    /**
+     * Instrumentation Test dependencies
+     */
+    androidTestCompile "org.mockito:mockito-core:$mockitoVersion"
+    androidTestCompile "com.google.dexmaker:dexmaker-mockito:$dexmakerMockitoVersion"
+    androidTestCompile "com.google.dexmaker:dexmaker:$dexmakerVersion"
+    androidTestCompile "com.android.support.test.espresso:espresso-core:$espressoVersion"
+    androidTestCompile "com.android.support.test.espresso:espresso-intents:$espressoVersion"
+    androidTestCompile "com.android.support.test:runner:$supportTestRunnerAndRulesVersion"
+    androidTestCompile "com.android.support.test:rules:$supportTestRunnerAndRulesVersion"
+}
